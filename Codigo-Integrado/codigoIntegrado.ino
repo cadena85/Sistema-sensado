@@ -85,9 +85,6 @@ void getGyroReadings() {
   readings["giX"] = String(gyroX);
   readings["giY"] = String(gyroY);
   readings["giZ"] = String(gyroZ);
-
-  //String jyroString = JSON.stringify(readings);
-  //return jyroString;
 }
 
 void getAccReadings() {
@@ -119,23 +116,31 @@ void getAltura() {
   readings["Altura"] = String(altitude - alturaInicial)+ "m";
 }
 
-
-void starDHT(){
+void startDHT(){
   dht.setup(pinDHT, DHTesp::DHT22);
-}
-
-void starMPU(){
-  if (!mpu.begin()) {
-    while (1) {
-      delay(20);
-    }
+  TempAndHumidity data = dht.getTempAndHumidity();
+  float humedityTem = data.humidity;
+  float temperatureTem = data.temperature;
+  
+  if(!isnan(humedityTem) && !isnan(temperatureTem)){
+    temperatur.attach(.1, getTemperatura);
+    humiditi.attach(.1, getHumedad);
   }
 }
 
-void starBMP() {
-  if (!bmp.begin()) {
-    Serial.println("No se pudo encontrar el sensor BMP180. Verifique la conexión.");
-    while (1);
+void startMPU(){
+  if (mpu.begin()) {
+    delay(250);
+    gyrosxyz.attach(.1, getGyroReadings);
+    accxyz.attach(.1, getAccReadings);    
+  }
+}
+
+void startBMP() {
+  if (bmp.begin()) {
+    delay(250);
+    alturaInicial = bmp.readAltitude();
+    altura.attach(.1, getAltura);
   }
 }
 
@@ -185,19 +190,12 @@ void startLoRA(){
 }
 
 void setup() {
-  //dht.setup(pinDHT, DHTesp::DHT22);
   Serial.begin(115200);
   startOLED();
   startLoRA();
-  starDHT();
-  starMPU();
-  starBMP();
-  alturaInicial = bmp.readAltitude();
-  temperatur.attach(.1, getTemperatura);
-  humiditi.attach(.1, getHumedad);
-  gyrosxyz.attach(.1, getGyroReadings);
-  accxyz.attach(.1, getAccReadings);
-  altura.attach(.1, getAltura);
+  startDHT();
+  startMPU();
+  startBMP();
 }
 
 void loop() {
