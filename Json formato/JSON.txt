@@ -1,0 +1,1 @@
+{"humedad":45.8,"temperatura":20.79365,"sensation":20.12426,"ax":261,"ay":-41,"az":13,"tempGY80":29.2,"pressure":77969,"altitude":2156.214,"latitud":19.31282,"longitud":-99.05759,"altitud":2220.192,"speed":0.932131,"sats":4,"dustDensity":0,"gx":12,"gy":8,"gz":-3}
